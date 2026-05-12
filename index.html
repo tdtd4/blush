@@ -114,12 +114,13 @@
       display: block;
     }
 
-    /* push sender's form offscreen, not display:none so it stays functional */
+    /* push sender's form offscreen, opacity not visibility so events still fire */
     .sender-form-field {
       position: absolute;
       left: -9999px;
       top: -9999px;
-      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* our own form */
@@ -270,11 +271,15 @@
       const senderButton  = senderField && senderField.querySelector('button[type="submit"], input[type="submit"], button');
 
       if (senderInput && senderButton) {
-        // copy email in, fire native input event so their JS picks it up
-        senderInput.value = ourEmail;
+        // use React's native input setter so their internal state updates
+        const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        nativeSetter.call(senderInput, ourEmail);
         senderInput.dispatchEvent(new Event('input', { bubbles: true }));
         senderInput.dispatchEvent(new Event('change', { bubbles: true }));
+        // briefly restore pointer-events so the click registers
+        senderField.style.pointerEvents = 'auto';
         senderButton.click();
+        senderField.style.pointerEvents = 'none';
         status.textContent = 'done.';
         document.getElementById('ml-email').value = '';
       } else {
@@ -284,10 +289,14 @@
           const si = document.querySelector('.sender-form-field input[type="email"], .sender-form-field input[type="text"]');
           const sb = document.querySelector('.sender-form-field button[type="submit"], .sender-form-field input[type="submit"], .sender-form-field button');
           if (si && sb) {
-            si.value = ourEmail;
+            const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+            nativeSetter.call(si, ourEmail);
             si.dispatchEvent(new Event('input', { bubbles: true }));
             si.dispatchEvent(new Event('change', { bubbles: true }));
+            const sf = document.querySelector('.sender-form-field');
+            sf.style.pointerEvents = 'auto';
             sb.click();
+            sf.style.pointerEvents = 'none';
             status.textContent = 'done.';
             document.getElementById('ml-email').value = '';
           } else {
