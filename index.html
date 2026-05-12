@@ -114,15 +114,6 @@
       display: block;
     }
 
-    /* push sender's form offscreen, opacity not visibility so events still fire */
-    .sender-form-field {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
     /* our own form */
     .ml-form {
       display: flex;
@@ -226,8 +217,6 @@
           <button type="button" id="ml-submit">subscribe</button>
         </div>
         <div class="ml-status" id="ml-status"></div>
-        <!-- sender.net form hidden offscreen -->
-        <div style="text-align: left" class="sender-form-field" data-sender-form-id="epYp86"></div>
       </div>
 
       <div class="footer-contact">
@@ -239,70 +228,35 @@
   </div>
 
   <script>
-    (function (s, e, n, d, er) {
-      s['Sender'] = er;
-      s[er] = s[er] || function () {
-        (s[er].q = s[er].q || []).push(arguments)
-      }, s[er].l = 1 * new Date();
-      s[er].on = function(event, callback) {
-        s[er].listeners = s[er].listeners || {};
-        (s[er].listeners[event] = s[er].listeners[event] || []).push(callback);
-      };
-      var a = e.createElement(n),
-          m = e.getElementsByTagName(n)[0];
-      a.async = 1;
-      a.src = d;
-      m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
-    sender('50d781924f9346')
+    document.getElementById('ml-submit').addEventListener('click', async function() {
+      const emailInput = document.getElementById('ml-email');
+      const status     = document.getElementById('ml-status');
+      const email      = emailInput.value.trim();
 
-    document.getElementById('ml-submit').addEventListener('click', function() {
-      const ourEmail = document.getElementById('ml-email').value.trim();
-      const status   = document.getElementById('ml-status');
-
-      if (!ourEmail || !ourEmail.includes('@')) {
+      if (!email || !email.includes('@')) {
         status.textContent = 'please enter a valid email.';
         return;
       }
 
-      // find the hidden sender.net form's email input and submit button
-      const senderField   = document.querySelector('.sender-form-field');
-      const senderInput   = senderField && senderField.querySelector('input[type="email"], input[type="text"]');
-      const senderButton  = senderField && senderField.querySelector('button[type="submit"], input[type="submit"], button');
+      status.textContent = '...';
 
-      if (senderInput && senderButton) {
-        // use React's native input setter so their internal state updates
-        const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-        nativeSetter.call(senderInput, ourEmail);
-        senderInput.dispatchEvent(new Event('input', { bubbles: true }));
-        senderInput.dispatchEvent(new Event('change', { bubbles: true }));
-        // briefly restore pointer-events so the click registers
-        senderField.style.pointerEvents = 'auto';
-        senderButton.click();
-        senderField.style.pointerEvents = 'none';
-        status.textContent = 'done.';
-        document.getElementById('ml-email').value = '';
-      } else {
-        // fallback: sender form not loaded yet, retry once after a second
-        status.textContent = '...';
-        setTimeout(function() {
-          const si = document.querySelector('.sender-form-field input[type="email"], .sender-form-field input[type="text"]');
-          const sb = document.querySelector('.sender-form-field button[type="submit"], .sender-form-field input[type="submit"], .sender-form-field button');
-          if (si && sb) {
-            const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-            nativeSetter.call(si, ourEmail);
-            si.dispatchEvent(new Event('input', { bubbles: true }));
-            si.dispatchEvent(new Event('change', { bubbles: true }));
-            const sf = document.querySelector('.sender-form-field');
-            sf.style.pointerEvents = 'auto';
-            sb.click();
-            sf.style.pointerEvents = 'none';
-            status.textContent = 'done.';
-            document.getElementById('ml-email').value = '';
-          } else {
-            status.textContent = 'something went wrong.';
-          }
-        }, 1000);
+      try {
+        const formData = new FormData();
+        formData.append('email', email);
+
+        const res = await fetch('https://stats.sender.net/forms/epYp86/submit', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          status.textContent = 'done.';
+          emailInput.value = '';
+        } else {
+          status.textContent = 'something went wrong.';
+        }
+      } catch(e) {
+        status.textContent = 'something went wrong.';
       }
     });
 
