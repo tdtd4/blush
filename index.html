@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Blush</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f0e6e6;
+      --text: #000000;
+    }
+
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant', Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Top-left fixed description panel ── */
+    .panel-main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 50%;
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .panel-main h1 {
+      font-family: 'Cormorant', Georgia, serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 1.33rem;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .panel-main h1 em {
+      font-style: italic;
+    }
+
+    /* ── Bottom pinned footer ── */
+    .panel-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background-color: var(--bg);
+      box-shadow: 0.4rem 0.4rem 2rem 2.5rem var(--bg);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .footer-contact {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+    }
+
+    .panel-footer a,
+    .panel-footer span,
+    .panel-footer label {
+      font-family: 'Cormorant', Georgia, serif;
+      font-size: 0.5rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1.1;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .panel-footer a:hover {
+      opacity: 0.6;
+    }
+
+    /* ── Mailing list form ── */
+    .mailing-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mailing-list label {
+      display: block;
+    }
+
+    .mailing-list-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mailing-list input[type="email"] {
+      font-family: 'Cormorant', Georgia, serif;
+      font-size: 0.5rem;
+      font-weight: 400;
+      color: var(--text);
+      background: #ffffff;
+      border: none;
+      outline: none;
+      padding: 1px 3px;
+      margin: 3px 0;
+      width: 6rem;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      image-rendering: pixelated;
+    }
+
+    .mailing-list input[type="email"]::placeholder {
+      color: var(--text);
+      opacity: 0.4;
+    }
+
+    .mailing-list button {
+      font-family: 'Cormorant', Georgia, serif;
+      font-size: 0.5rem;
+      font-weight: 400;
+      color: var(--text);
+      background: #ffffff;
+      border: none;
+      padding: 2px 5px;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 0;
+      width: fit-content;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .mailing-list button:hover {
+      opacity: 0.6;
+    }
+
+    .mailing-list .ml-message {
+      font-family: 'Cormorant', Georgia, serif;
+      font-size: 0.5rem;
+      font-weight: 400;
+      color: var(--text);
+      opacity: 0.7;
+      min-height: 0.6rem;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .panel-main {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+        padding: 1rem 1rem 7rem;
+      }
+
+      .panel-main h1 {
+        font-size: 1.1rem;
+      }
+
+      .panel-footer {
+        padding: 0.75rem 1rem;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .footer-contact {
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="panel-main">
+    <h1><em>blush</em> is a DIY publisher<br>based in Glasgow.</h1>
+  </div>
+
+  <div class="panel-footer">
+    <div class="footer-inner">
+
+      <div class="mailing-list">
+        <label for="ml-email">mailing list</label>
+        <div class="mailing-list-fields">
+          <input type="email" id="ml-email" placeholder="your@email.com" autocomplete="email" />
+          <button type="button" id="ml-submit">subscribe</button>
+        </div>
+        <span class="ml-message" id="ml-message"></span>
+      </div>
+
+      <div class="footer-contact">
+        <span>blushdiy[at]gmail[dot]com</span>
+        <a href="https://instagram.com/blush_tbc" target="_blank" rel="noopener">@blush_tbc</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── sender.net config ──────────────────────────────────────────
+    const SENDER_API_TOKEN = 'YOUR_API_TOKEN_HERE'; // paste your sender.net API token
+    const SENDER_GROUP_ID  = 'YOUR_GROUP_ID_HERE';  // paste your sender.net list/group ID
+    // ──────────────────────────────────────────────────────────────
+
+    document.getElementById('ml-submit').addEventListener('click', async () => {
+      const emailInput = document.getElementById('ml-email');
+      const message    = document.getElementById('ml-message');
+      const email      = emailInput.value.trim();
+
+      if (!email || !email.includes('@')) {
+        message.textContent = 'please enter a valid email.';
+        return;
+      }
+
+      message.textContent = '...';
+
+      try {
+        const res = await fetch('https://api.sender.net/v2/subscribers', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SENDER_API_TOKEN}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, groups: [SENDER_GROUP_ID] })
+        });
+
+        if (res.ok) {
+          message.textContent = 'done.';
+          emailInput.value = '';
+        } else {
+          message.textContent = 'something went wrong.';
+        }
+      } catch {
+        message.textContent = 'something went wrong.';
+      }
+    });
+
+    document.getElementById('ml-email').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('ml-submit').click();
+    });
+  </script>
+
+</body>
+</html>
