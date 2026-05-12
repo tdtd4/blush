@@ -98,24 +98,39 @@
       opacity: 0.6;
     }
 
-    /* ── Mailing list form ── */
+    /* ── Mailing list label ── */
     .mailing-list {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
-    .mailing-list label {
+    .mailing-list > label {
+      font-family: 'Cormorant', Georgia, serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.1;
       display: block;
     }
 
-    .mailing-list-fields {
+    /* push sender's form offscreen, not display:none so it stays functional */
+    .sender-form-field {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      visibility: hidden;
+    }
+
+    /* our own form */
+    .ml-form {
       display: flex;
       flex-direction: column;
       gap: 0;
+      margin: 3px 0;
     }
 
-    .mailing-list input[type="email"] {
+    .ml-form input[type="email"] {
       font-family: 'Cormorant', Georgia, serif;
       font-size: 0.8rem;
       font-weight: 400;
@@ -124,20 +139,19 @@
       border: none;
       outline: none;
       padding: 1px 3px;
-      margin: 3px 0;
-      width: 9rem;
+      margin: 0 0 2px 0;
+      width: 10rem;
       border-radius: 0;
       -webkit-appearance: none;
       appearance: none;
-      image-rendering: pixelated;
     }
 
-    .mailing-list input[type="email"]::placeholder {
+    .ml-form input[type="email"]::placeholder {
       color: var(--text);
       opacity: 0.4;
     }
 
-    .mailing-list button {
+    .ml-form button {
       font-family: 'Cormorant', Georgia, serif;
       font-size: 0.8rem;
       font-weight: 400;
@@ -153,17 +167,18 @@
       appearance: none;
     }
 
-    .mailing-list button:hover {
+    .ml-form button:hover {
       opacity: 0.6;
     }
 
-    .mailing-list .ml-message {
+    .ml-status {
       font-family: 'Cormorant', Georgia, serif;
       font-size: 0.8rem;
       font-weight: 400;
       color: var(--text);
       opacity: 0.7;
-      min-height: 0.6rem;
+      min-height: 0.8rem;
+      margin-top: 2px;
     }
 
     /* ── Mobile ── */
@@ -204,12 +219,14 @@
     <div class="footer-inner">
 
       <div class="mailing-list">
-        <label for="ml-email">mailing list</label>
-        <div class="mailing-list-fields">
+        <label>mailing list</label>
+        <div class="ml-form">
           <input type="email" id="ml-email" placeholder="your@email.com" autocomplete="email" />
           <button type="button" id="ml-submit">subscribe</button>
         </div>
-        <span class="ml-message" id="ml-message"></span>
+        <div class="ml-status" id="ml-status"></div>
+        <!-- sender.net form hidden offscreen -->
+        <div style="text-align: left" class="sender-form-field" data-sender-form-id="epYp86"></div>
       </div>
 
       <div class="footer-contact">
@@ -221,46 +238,66 @@
   </div>
 
   <script>
-    // ── sender.net config ──────────────────────────────────────────
-    const SENDER_API_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNDUwOGEwYTc2NjBkZmQ2ZDY5YmEyZmYyNDE4MzQwM2YyOWZkMGY5OTZkYWU1N2FkMmYwYjA1M2ZmNTI1MzkzMjQyYjk3YzM0MTU5MGM0MTIiLCJpYXQiOjE3Nzg2MTMzNDIuNjY3OTc1LCJuYmYiOjE3Nzg2MTMzNDIuNjY3OTc5LCJleHAiOjQ5MzIyMTMzNDIuNjY1OTYyLCJzdWIiOiIxMDcyMjM5Iiwic2NvcGVzIjpbXX0.nxcDb-CYyVDtbofBSgwupJJ-X_IjLE19IR7ZPuv3_rPBu5f5U-B2V-XKAQcLYGeMyagBgPxdOreC2494TLah-HVgijzWacEjeCtZzR9JLHSQjyRiWQmFz4kgB5BYpugrgtuODv9Iv75y7nyqetyh4jW0hbt5YGMZ8D4EhKsaC87KYIzQauRCwbmyZMDAAJnNHdtsy56PBqGIGjMGOyWJF6U0iFGxGDWTl7Yf5gWvr40qDqBRaxwgCoRHQf48LDXOTS5X1IzicQU1_80_HYdgBpXvRdQmVAyRFxWa4_IfHgeTKzsl2uCjhvrqp0NOcNe-NfbxYmaz4agRWew-cLCMQnyvn0RXLUeFXQT5I3C86ywqyAMnPkIyN3rbw8dDEIfgCeoKtqyBqbdVcIR1U6AMEQ_IIWt6EWTNNp_f1laOW-6gyz0tWYTTsD0d3ud28UrMOcZX3VA4XKppH1SXpLubXxKo1hWcDLF4bufVfznKf9fHmCy2UiP8NMEr2viBmg5kYL7L9WQqLBsGkP9QuBrAAOBtv_0QB59piACKX1aEl66ZmsxR_DLsPHO329qYKyBpsjXPtWX9GJUtrvqvS93V-myoR6tPnQ_F_fy89ime0w2Frclgug5-kZMBcGCJjltzUhY5jz87FEm13bpJkPZAdICU5PFAGBajnfnJydLaq8M'; // paste your sender.net API token
-    const SENDER_GROUP_ID  = 'bDxZ8q';  // paste your sender.net list/group ID
-    // ──────────────────────────────────────────────────────────────
+    (function (s, e, n, d, er) {
+      s['Sender'] = er;
+      s[er] = s[er] || function () {
+        (s[er].q = s[er].q || []).push(arguments)
+      }, s[er].l = 1 * new Date();
+      s[er].on = function(event, callback) {
+        s[er].listeners = s[er].listeners || {};
+        (s[er].listeners[event] = s[er].listeners[event] || []).push(callback);
+      };
+      var a = e.createElement(n),
+          m = e.getElementsByTagName(n)[0];
+      a.async = 1;
+      a.src = d;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
+    sender('50d781924f9346')
 
-    document.getElementById('ml-submit').addEventListener('click', async () => {
-      const emailInput = document.getElementById('ml-email');
-      const message    = document.getElementById('ml-message');
-      const email      = emailInput.value.trim();
+    document.getElementById('ml-submit').addEventListener('click', function() {
+      const ourEmail = document.getElementById('ml-email').value.trim();
+      const status   = document.getElementById('ml-status');
 
-      if (!email || !email.includes('@')) {
-        message.textContent = 'please enter a valid email.';
+      if (!ourEmail || !ourEmail.includes('@')) {
+        status.textContent = 'please enter a valid email.';
         return;
       }
 
-      message.textContent = '...';
+      // find the hidden sender.net form's email input and submit button
+      const senderField   = document.querySelector('.sender-form-field');
+      const senderInput   = senderField && senderField.querySelector('input[type="email"], input[type="text"]');
+      const senderButton  = senderField && senderField.querySelector('button[type="submit"], input[type="submit"], button');
 
-      try {
-        const res = await fetch('https://api.sender.net/v2/subscribers', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SENDER_API_TOKEN}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ email, groups: [SENDER_GROUP_ID] })
-        });
-
-        if (res.ok) {
-          message.textContent = 'done.';
-          emailInput.value = '';
-        } else {
-          message.textContent = 'something went wrong.';
-        }
-      } catch {
-        message.textContent = 'something went wrong.';
+      if (senderInput && senderButton) {
+        // copy email in, fire native input event so their JS picks it up
+        senderInput.value = ourEmail;
+        senderInput.dispatchEvent(new Event('input', { bubbles: true }));
+        senderInput.dispatchEvent(new Event('change', { bubbles: true }));
+        senderButton.click();
+        status.textContent = 'done.';
+        document.getElementById('ml-email').value = '';
+      } else {
+        // fallback: sender form not loaded yet, retry once after a second
+        status.textContent = '...';
+        setTimeout(function() {
+          const si = document.querySelector('.sender-form-field input[type="email"], .sender-form-field input[type="text"]');
+          const sb = document.querySelector('.sender-form-field button[type="submit"], .sender-form-field input[type="submit"], .sender-form-field button');
+          if (si && sb) {
+            si.value = ourEmail;
+            si.dispatchEvent(new Event('input', { bubbles: true }));
+            si.dispatchEvent(new Event('change', { bubbles: true }));
+            sb.click();
+            status.textContent = 'done.';
+            document.getElementById('ml-email').value = '';
+          } else {
+            status.textContent = 'something went wrong.';
+          }
+        }, 1000);
       }
     });
 
-    document.getElementById('ml-email').addEventListener('keydown', (e) => {
+    document.getElementById('ml-email').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') document.getElementById('ml-submit').click();
     });
   </script>
